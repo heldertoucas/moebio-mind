@@ -1,0 +1,44 @@
+<fcWhite><fs15><fs32><b>Look into the machine's mind</b></f>
+
+<fs24><b>the data</b></f>
+Using the <a href="https://platform.openai.com/docs/guides/text-generation" style="color: white;" target="_blank">chatgpt api</a>, I ran the same completion prompt <i>"Intelligence is "</i> hundreds of times (setting the temperature <link> quite high, at 1.6, for more diverse responses). Given a text, a Large Language Model assigns a probability for the word (token) to come, and it just repeats this process until a completion is…well, complete.
+
+
+<fs24><b>semantic space</b></f> <fs9>(behind)</f>
+Each text (a prompt completion or a sub-sequence) has an embedding: a position in a 1536-dimensions space (I call it semantic space, or s²₁₅₃₆). For each response there's a trajectory through s²₁₅₃₆ that corresponds to each sub-sequence of words, example: <i>"Intelligence is "</i> → <i>"Intelligence is the"</i> → <i>"Intelligence is the ability"</i> → <i>"Intelligence is the ability to"</i> → … → <i>full completion</i>.
+
+Because I cannot visualize a 1536-dimensions space (yet), I use a popular technique called <a href="https://en.wikipedia.org/wiki/Principal_component_analysis" style="color: white;" target="_blank">Principal Components Analysis</a> that tells me, for the set of points I have, what are the most important (principal) dimensions, and allows me to rotate the highly dimensional space so when I look through it, projected into only 3 dimensions, the points are scattered as much as possible. It's the best (linear)possible reduction of dimensions. In fewer words: it compresses a highly dimensional space into few dimensions while preserving as much info as it can. More or less the same as when for drawing something you choose a perspective (you rotate the object), so it provides the most relevant information. I call this new space s²₃, and it's what I visualize.
+
+What you see in the cube is a tree of trajectories that bifurcate. All start with <i>"Intelligence is "</i> and progress towards longer and less probable sub-sequences of responses. It's a different representation of the same tree being visualized on the right (both visualizations communicate).
+
+
+<fs24><b>The tree visualization</b></f> <fs9>(right)</f>
+Visualizes all collected completions. It also represents the calculated probability of a word following a text (because the sample is small, this is only a good approximation for the initial levels of the tree), so <i>"Intelligence is the "</i> will be followed by <i>"ability"</i> ~75% of the times, at 1.6 temperature. If temperature was lower this probability would rise, until achieving certainity at temperature=0.
+
+By hovering a word, which corresponds to a point in a sub-sequence, you can see in the cube the trajectory from the prompt to all the completions that start with that sub-sequence.
+
+
+<fs24><b>Try other prompts:</b></f>
+· <a href="javascript:document.clickFunction(0)" style="color: white;">Chatgpt is</a>
+· <a href="javascript:document.clickFunction(1)" style="color: white;">Best thing about AI is</a>
+· <a href="javascript:document.clickFunction(2)" style="color: white;">When</a>
+· <a href="javascript:document.clickFunction(3)" style="color: white;">Santiago Ortiz is</a> <fs10>(yes, this is a selfai. What I found interesting is that it's ~50% truth ~50% bs, and it feels like it describes alternative versions of my self in the multiverse)</f>
+· <a href="javascript:document.clickFunction(4)" style="color: white;">My dream</a>
+· <a href="javascript:document.clickFunction(5)" style="color: white;">Tell me a story:</a>
+· <a href="javascript:document.clickFunction(6)" style="color: white;">(français) ERP c'est</a>
+· <a href="javascript:document.clickFunction(7)" style="color: white;">Intelligence is</a>
+<!--
+
+<fs24><b>Play with the temperature</b></f>
+<a href="javascript:document.clickFunction(100)" style="color: white;">click here</a> to enable control over the temperature, from 0 to 1.6. When temperature (equivalent to entropy) goes down so do the options for each next word. 
+-->
+
+<fs24><b>references</b></f>
+<a href="https://medium.com/@moebio/simulating-my-friend-philippe-a8c9af223002" style="color: white;" target="_blank">Simulating my friend Philippe</a>, where I explain embeddings, and how they are used to run semantic search and to find the proper knowledge from a corpus to use it as context for LLMs prompts
+<a href="https://writings.stephenwolfram.com/2023/02/what-is-chatgpt-doing-and-why-does-it-work/" style="color: white;" target="_blank">A deeper explanation of LLMs</a>, next token prediction, temperature and embeddings, by Stephen Wolfram</f>
+<a href="https://www.futilitycloset.com/2014/12/12/english-by-degrees/" style="color: white;" target="_blank">English by degrees</a> the original Next Word prediction model by Claude Shannon
+
+<a href="https://moebio.com" style="color: white;" target="_blank">moebio</a> for more experiments and data proyects
+
+</f>
+</f>
