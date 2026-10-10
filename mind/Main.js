@@ -1,4 +1,4 @@
-const URL_VIEW_BASE = "../../../../Pulse_And_Tiles/Tiles/"
+const URL_VIEW_BASE = "Pulse_And_Tiles/Tiles/"
 
 let k
 let tree
@@ -103,16 +103,27 @@ let font
 simplify_embedding_numbers = true
 
 init=function(){
-	font = new FontFace(fontName, 'url(fonts/'+fontName+'/'+fontName.replaceAll("_","")+'-'+fontStyle+'.ttf'+')');
-	font.load().then(function(font){
-	  	document.fonts.add(font)
-
+	let proceed = function(){
 	  	if(dataFile){
 			_.loadData(dataFile, onLoadData, "json")
 		} else {
 			onLoadData({result:[]})
 		}
-	})
+	}
+
+	try {
+		font = new FontFace(fontName, 'url(fonts/'+fontName+'/'+fontName.replaceAll("_","")+'-'+fontStyle+'.ttf'+')');
+		font.load().then(function(loadedFont){
+		  	document.fonts.add(loadedFont)
+		  	proceed()
+		}).catch(function(err){
+			console.warn("Font loading fallback:", err)
+			proceed()
+		})
+	} catch(e) {
+		console.warn("Font error:", e)
+		proceed()
+	}
 	_.loadData("Help.txt", onLoadHelp, "txt")
 }
 
