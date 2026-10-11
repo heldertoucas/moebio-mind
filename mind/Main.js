@@ -13,43 +13,15 @@ let maxLength
 let overNode
 
 
-let start = "Intelligence is "//"I had this crazy dream: "//"When "
-const dataFile = "data/intelligence_is.json"//"tree2.json"// 
+let start = "Inteligência é "
+const dataFile = "data/inteligencia_e.json"
 let runCompletions = false
 
-// let start = "Santiago Ortiz is "//"I had this crazy dream: "//"When "
-// const dataFile = "data/Santiago_Ortiz_is.json"//"tree2.json"// 
-// let runCompletions = true
-
-
-// let start = "When "//"I had this crazy dream: "//"When "
-// const dataFile = "data/When.json"//"tree2.json"// 
-// let runCompletions = true
-
-
-// let start = "The best thing about AI is its ability to "//"I had this crazy dream: "//"When "
-// const dataFile = "data/best_thing_about_ai_is.json"//"tree2.json"// 
-// let runCompletions = false
-
-// let start = "tell me a story: "//"I had this crazy dream: "//"When "
-// const dataFile = "data/tell_me_a_story.json"//"tree2.json"// 
-// let runCompletions = false
-
-
-// let start = "chatgpt is "//"I had this crazy dream: "//"When "
-// const dataFile = "data/chatgpt_is.json"//"tree2.json"// 
-// let runCompletions = true
-
-// let start = "my dream "//"I had this crazy dream: "//"When "
-// const dataFile = "data/My_dream.json"//"tree2.json"// 
-// let runCompletions = false
-
-//let start = "L'ERP c'est "//"I had this crazy dream: "//"When "
-//const dataFile = "data/ERP.json"// = "data/My_dream.json"//"tree2.json"// 
-//let runCompletions = true
-
-
 const promptFiles = [
+	{
+		start:"Inteligência é ",
+		file:"data/inteligencia_e.json"
+	},
 	{
 		start:"Chatgpt is ",//"I had this crazy dream: "//"When "
 		file:"data/chatgpt_is.json"
@@ -184,9 +156,17 @@ receiveDataFromView = function(ob){
 		let withDelay = !ob.data.value.nodes.includes(overNode)
 		overNode = ob.data.value
 		triggerStableOverNode(withDelay)
-		k.mX=-1000
+		k.mX = -1000
+		k.PREV_mX = -1000
+		k.MOUSE_PRESSED = false
+		k.DX_MOUSE = 0
+		k.DY_MOUSE = 0
+		k.DX_MOUSE_PRESSED = 0
+		k.DY_MOUSE_PRESSED = 0
+		updateDidacticOverlay(overNode)
 	} else {
 		overNode = null
+		updateDidacticOverlay(null)
 	}
 }
 

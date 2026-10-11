@@ -53,7 +53,12 @@ drawTree = function(){
 	}
 
 	if(k.mX>k.W-22 && k.mY<22) k.MOUSE_PRESSED = false
-	e3D.mouseControl(k, 1)
+	if(k.mX < 0 || k.mY < 0){
+		k.MOUSE_PRESSED = false
+		k.DX_MOUSE_PRESSED = 0
+		k.DY_MOUSE_PRESSED = 0
+	}
+	e3D.mouseControl(k, 0.92)
 	e3D.x0 = k.cX
 	e3D.y0 = k.cY
 
@@ -100,6 +105,7 @@ drawTree = function(){
 		complete_text = null
 		let withDelay = !overNode || !overNode.nodes.includes(stableOverNode)
 		triggerStableOverNode(withDelay)
+		updateDidacticOverlay(overNode)
 	}
 
 	drawText()
@@ -175,6 +181,9 @@ drawTemperatureControl = function(){
 
 	const xT = x + w*simulatedTemperature/1.6
 	k.fill("white")
+	k.setText("white", 12, null, null, "left", "bottom")
+	k.context.font = "12px "+fontName
+	k.fText("Temperatura: " + simulatedTemperature.toFixed(2), x, y - 8)
 	let over = k.fCircleM(xT,y,4, 5)
 	if(over){
 		k.pointer()
@@ -329,11 +338,93 @@ drawText = function(){
 		return
 	}
 
-	if(!stableOverNode) {
-		htmlArea.setData("")
+	// Limpar o texto de fundo para manter o cubo 3D limpo e desobstruído
+	htmlArea.setData("")
+}
+
+// -------------------------------------------------------------
+// SISTEMA DE OVERLAY DIDÁTICO PEDAGÓGICO
+// -------------------------------------------------------------
+let didacticActive = true
+let lastDidacticNode = null
+
+window.toggleDidacticMode = function(){
+	didacticActive = !didacticActive
+	const panel = document.getElementById("didactic-panel")
+	const btnText = document.getElementById("didactic-btn-text")
+	if(panel){
+		panel.classList.toggle("active", didacticActive)
+	}
+	if(btnText){
+		btnText.textContent = didacticActive ? "Modo Didático: LIGADO" : "Modo Didático: DESLIGADO"
+	}
+}
+
+// Atalho de teclado 'D'
+window.addEventListener("keydown", function(e){
+	if(e.key === "d" || e.key === "D"){
+		toggleDidacticMode()
+	}
+})
+
+updateDidacticOverlay = function(node){
+	if(!didacticActive) return
+
+	const badge = document.getElementById("didactic-status-badge")
+	const contextEl = document.getElementById("didactic-context")
+	const tokenEl = document.getElementById("didactic-token")
+	const probEl = document.getElementById("didactic-prob")
+	const coordsEl = document.getElementById("didactic-coords")
+
+	if(!node){
+		lastDidacticNode = null
+		if(badge) badge.textContent = "A aguardar seleção"
+		if(contextEl) contextEl.textContent = "Passa o rato sobre uma palavra na árvore ou nó no cubo 3D..."
+		if(tokenEl) tokenEl.textContent = "—"
+		if(probEl) probEl.textContent = "—"
+		if(coordsEl) coordsEl.textContent = "—"
 		return
 	}
-	
-	htmlArea.setData("<fs58><b><span style='color: rgba(255, 255, 255, 0.25);'>"+stableOverNode.id+"</span><span style='color: rgba(255, 255, 255, 0.15);'>"+complete_text+"</b></f>")
-	if(!complete_text || k.nF%4==0) buildCompleteText()
+
+	// Se o nó veio da árvore do iframe (cópia desserializada), obter o nó correspondente na árvore principal
+	let canonicalNode = node
+	if(tree && node.id && (!node.object || !node.object.pca)){
+		const found = tree.get(node.id)
+		if(found) canonicalNode = found
+	}
+
+	if(lastDidacticNode && lastDidacticNode.id === canonicalNode.id) return
+	lastDidacticNode = canonicalNode
+
+	if(badge) badge.textContent = "Nó Ativo"
+	if(contextEl) contextEl.innerHTML = `“<b>${canonicalNode.id}</b>”`
+	if(tokenEl) tokenEl.textContent = `"${canonicalNode.name}"`
+
+	// Cálculo da probabilidade condicional
+	let probText = "100% (Raiz)"
+	if(canonicalNode.parent && canonicalNode.parent.to && canonicalNode.parent.to.length > 0){
+		let totalSiblingsDown = 0
+		canonicalNode.parent.to.forEach(son => {
+			totalSiblingsDown += (son.nDown || 1)
+		})
+		const myDown = canonicalNode.nDown || 1
+		const pct = Math.round((myDown / totalSiblingsDown) * 100)
+		probText = `${pct}% (${myDown} de ${totalSiblingsDown} ramificações)`
+	} else if(canonicalNode.to && canonicalNode.to.length > 0) {
+		let totalDown = 0
+		canonicalNode.to.forEach(son => { totalDown += (son.nDown || 1) })
+		probText = `Origem com ${canonicalNode.to.length} alternativas (${totalDown} trajetórias)`
+	}
+	if(probEl) probEl.textContent = probText
+
+	// Coordenadas semânticas do PCA
+	if(canonicalNode.object && canonicalNode.object.pca){
+		const px = Math.round(canonicalNode.object.pca.x)
+		const py = Math.round(canonicalNode.object.pca.y)
+		const pz = Math.round(canonicalNode.object.pca.z)
+		if(coordsEl) coordsEl.textContent = `X: ${px} | Y: ${py} | Z: ${pz}`
+	} else {
+		if(coordsEl) coordsEl.textContent = "A calcular..."
+	}
 }
+

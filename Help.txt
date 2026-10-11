@@ -1,44 +1,43 @@
-<fcWhite><fs15><fs32><b>Look into the machine's mind</b></f>
+<fcWhite><fs15><fs32><b>Espreitar a mente da máquina</b></f>
 
-<fs24><b>the data</b></f>
-Using the <a href="https://platform.openai.com/docs/guides/text-generation" style="color: white;" target="_blank">chatgpt api</a>, I ran the same completion prompt <i>"Intelligence is "</i> hundreds of times (setting the temperature <link> quite high, at 1.6, for more diverse responses). Given a text, a Large Language Model assigns a probability for the word (token) to come, and it just repeats this process until a completion is…well, complete.
-
-
-<fs24><b>semantic space</b></f> <fs9>(behind)</f>
-Each text (a prompt completion or a sub-sequence) has an embedding: a position in a 1536-dimensions space (I call it semantic space, or s²₁₅₃₆). For each response there's a trajectory through s²₁₅₃₆ that corresponds to each sub-sequence of words, example: <i>"Intelligence is "</i> → <i>"Intelligence is the"</i> → <i>"Intelligence is the ability"</i> → <i>"Intelligence is the ability to"</i> → … → <i>full completion</i>.
-
-Because I cannot visualize a 1536-dimensions space (yet), I use a popular technique called <a href="https://en.wikipedia.org/wiki/Principal_component_analysis" style="color: white;" target="_blank">Principal Components Analysis</a> that tells me, for the set of points I have, what are the most important (principal) dimensions, and allows me to rotate the highly dimensional space so when I look through it, projected into only 3 dimensions, the points are scattered as much as possible. It's the best (linear)possible reduction of dimensions. In fewer words: it compresses a highly dimensional space into few dimensions while preserving as much info as it can. More or less the same as when for drawing something you choose a perspective (you rotate the object), so it provides the most relevant information. I call this new space s²₃, and it's what I visualize.
-
-What you see in the cube is a tree of trajectories that bifurcate. All start with <i>"Intelligence is "</i> and progress towards longer and less probable sub-sequences of responses. It's a different representation of the same tree being visualized on the right (both visualizations communicate).
+<fs24><b>os dados</b></f>
+Usando a <a href="https://platform.openai.com/docs/guides/text-generation" style="color: white;" target="_blank">API do ChatGPT</a>, executei o mesmo prompt de conclusão <i>"Intelligence is "</i> centenas de vezes (definindo a temperatura bastante alta, a 1.6, para obter respostas mais diversas). Dado um texto inicial, um Grande Modelo de Linguagem (LLM) calcula uma probabilidade para a próxima palavra (token) a surgir, repetindo este processo ciclicamente até que a conclusão termine.
 
 
-<fs24><b>The tree visualization</b></f> <fs9>(right)</f>
-Visualizes all collected completions. It also represents the calculated probability of a word following a text (because the sample is small, this is only a good approximation for the initial levels of the tree), so <i>"Intelligence is the "</i> will be followed by <i>"ability"</i> ~75% of the times, at 1.6 temperature. If temperature was lower this probability would rise, until achieving certainity at temperature=0.
+<fs24><b>espaço semântico</b></f> <fs9>(ao fundo no cubo 3D)</f>
+Cada texto (seja uma conclusão inteira ou uma subsequência) tem um embedding associado: uma coordenada matemática num espaço vetorial de 1536 dimensões (espaço semântico, ou s²₁₅₃₆). Para cada resposta gerada, existe uma trajetória através de s²₁₅₃₆ que corresponde a cada subsequência incremental de palavras. Exemplo: <i>"Intelligence is "</i> → <i>"Intelligence is the"</i> → <i>"Intelligence is the ability"</i> → <i>"Intelligence is the ability to"</i> → … → <i>conclusão final</i>.
 
-By hovering a word, which corresponds to a point in a sub-sequence, you can see in the cube the trajectory from the prompt to all the completions that start with that sub-sequence.
+Como não é possível visualizar diretamente 1536 dimensões, utilizamos a técnica de <a href="https://pt.wikipedia.org/wiki/An%C3%A1lise_de_componentes_principais" style="color: white;" target="_blank">Análise de Componentes Principais (PCA)</a>. O PCA identifica as direções de maior variância (as dimensões principais) e permite rodar e projetar esse espaço hiperdimensional em apenas 3 dimensões, preservando a dispersão máxima dos dados. É a melhor redução dimensional linear possível: comprime centenas de dimensões mantendo a informação essencial — tal como escolher a melhor perspetiva ao desenhar um objeto 3D. A esse espaço 3D chamamos s²₃, e é o que está representado no cubo interativo.
+
+O cubo exibe uma árvore tridimensional de trajetórias que se bifurcam. Todas começam no prompt e avançam para ramos cada vez mais longos e específicos. É a representação espacial direta da árvore probabilística mostrada à direita.
 
 
-<fs24><b>Try other prompts:</b></f>
-· <a href="javascript:document.clickFunction(0)" style="color: white;">Chatgpt is</a>
-· <a href="javascript:document.clickFunction(1)" style="color: white;">Best thing about AI is</a>
-· <a href="javascript:document.clickFunction(2)" style="color: white;">When</a>
-· <a href="javascript:document.clickFunction(3)" style="color: white;">Santiago Ortiz is</a> <fs10>(yes, this is a selfai. What I found interesting is that it's ~50% truth ~50% bs, and it feels like it describes alternative versions of my self in the multiverse)</f>
-· <a href="javascript:document.clickFunction(4)" style="color: white;">My dream</a>
-· <a href="javascript:document.clickFunction(5)" style="color: white;">Tell me a story:</a>
-· <a href="javascript:document.clickFunction(6)" style="color: white;">(français) ERP c'est</a>
-· <a href="javascript:document.clickFunction(7)" style="color: white;">Intelligence is</a>
-<!--
+<fs24><b>visualização em árvore</b></f> <fs9>(painel à direita)</f>
+Representa todas as conclusões recolhidas e calcula a probabilidade observada de uma palavra suceder ao texto acumulado (devido à dimensão da amostra, é uma aproximação fiel sobretudo nos níveis iniciais da árvore). Por exemplo: a seguir a <i>"Intelligence is the "</i> surge <i>"ability"</i> cerca de 75% das vezes com temperatura 1.6. Se a temperatura for reduzida, essa probabilidade concentra-se até atingir certeza absoluta a temperatura = 0.
 
-<fs24><b>Play with the temperature</b></f>
-<a href="javascript:document.clickFunction(100)" style="color: white;">click here</a> to enable control over the temperature, from 0 to 1.6. When temperature (equivalent to entropy) goes down so do the options for each next word. 
--->
+Ao passar o rato sobre qualquer palavra (um nó na subsequência), o cubo 3D destaca a trajetória correspondente, desde o prompt de partida até todas as ramificações possíveis.
 
-<fs24><b>references</b></f>
-<a href="https://medium.com/@moebio/simulating-my-friend-philippe-a8c9af223002" style="color: white;" target="_blank">Simulating my friend Philippe</a>, where I explain embeddings, and how they are used to run semantic search and to find the proper knowledge from a corpus to use it as context for LLMs prompts
-<a href="https://writings.stephenwolfram.com/2023/02/what-is-chatgpt-doing-and-why-does-it-work/" style="color: white;" target="_blank">A deeper explanation of LLMs</a>, next token prediction, temperature and embeddings, by Stephen Wolfram</f>
-<a href="https://www.futilitycloset.com/2014/12/12/english-by-degrees/" style="color: white;" target="_blank">English by degrees</a> the original Next Word prediction model by Claude Shannon
 
-<a href="https://moebio.com" style="color: white;" target="_blank">moebio</a> for more experiments and data proyects
+<fs24><b>Explorar prompts:</b></f>
+· <a href="javascript:document.clickFunction(0)" style="color: #64b5f6; font-weight: bold;">🇵🇹 Inteligência é... (Português)</a>
+· <a href="javascript:document.clickFunction(1)" style="color: white;">O ChatGPT é... (Chatgpt is)</a>
+· <a href="javascript:document.clickFunction(2)" style="color: white;">O melhor da IA é... (Best thing about AI is)</a>
+· <a href="javascript:document.clickFunction(3)" style="color: white;">Quando... (When)</a>
+· <a href="javascript:document.clickFunction(4)" style="color: white;">Santiago Ortiz é... (Santiago Ortiz is)</a> <fs10>(uma auto-projeção reflexiva no multiverso dos dados gerados)</f>
+· <a href="javascript:document.clickFunction(5)" style="color: white;">O meu sonho... (My dream)</a>
+· <a href="javascript:document.clickFunction(6)" style="color: white;">Conta-me uma história... (Tell me a story:)</a>
+· <a href="javascript:document.clickFunction(7)" style="color: white;">(Francês) O ERP é... (ERP c'est)</a>
+· <a href="javascript:document.clickFunction(8)" style="color: white;">A inteligência é... (Intelligence is - EN)</a>
+
+<fs24><b>Controlo de Temperatura</b></f>
+<a href="javascript:document.clickFunction(100)" style="color: #64b5f6; font-weight: bold;">Clica aqui</a> para ativar a barra de controlo de temperatura no canto inferior esquerdo (0.0 a 1.6). Ao baixar a temperatura (menor entropia), os caminhos menos prováveis desaparecem e a IA torna-se estritamente determinista.
+
+
+<fs24><b>referências pedagógicas</b></f>
+<a href="https://medium.com/@moebio/simulating-my-friend-philippe-a8c9af223002" style="color: white;" target="_blank">Simular o meu amigo Philippe</a> — Artigo sobre embeddings, pesquisa semântica e contexto para LLMs (por Santiago Ortiz).
+<a href="https://writings.stephenwolfram.com/2023/02/what-is-chatgpt-doing-and-why-does-it-work/" style="color: white;" target="_blank">O que está o ChatGPT a fazer e porque funciona?</a> — Guia aprofundado de Stephen Wolfram sobre tokens, temperatura e embeddings.
+<a href="https://www.futilitycloset.com/2014/12/12/english-by-degrees/" style="color: white;" target="_blank">English by degrees</a> — O modelo histórico de previsão de palavras de Claude Shannon.
+<a href="https://moebio.com" style="color: white;" target="_blank">moebio.com</a> — Mais experiências e projetos de visualização de dados de Santiago Ortiz.
 
 </f>
 </f>
