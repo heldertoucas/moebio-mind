@@ -85,15 +85,27 @@ drawTree = function(){
 	sortedNodes.forEach(node=>{
 		if(node.p.z<0.01) return
 
-		const color = _.antiTemperature(0.95*node.id.length/maxLength)//_.antiTemperature(node.level/tree.nLevels)//
+		// Efeito direto da temperatura: ramos com probabilidade marginal desvanecem progressivamente
+		let tempAlpha = 1.0
+		let tempSizeMultiplier = 1.0
+		if(typeof simulatedTemperature !== "undefined" && node.flow != null){
+			if(simulatedTemperature < 1.58){
+				const flow = node.flow
+				tempAlpha = Math.max(Math.min(flow * 3.5, 1.0), 0.03)
+				tempSizeMultiplier = Math.max(Math.min(Math.pow(flow, 0.25), 1.0), 0.18)
+			}
+		}
+
+		const color = _.antiTemperature(0.95*node.id.length/maxLength)
 		const highlighted = overNode==node || overFather
 
-		node.size = node.p.z*2.4*(node.to.length==1?1:1.2)
+		node.size = node.p.z*2.4*(node.to.length==1?1:1.2) * tempSizeMultiplier
 
-		k.fill(_.addAlpha(color, node.p.z*(highlighted?1.4:(!overNode?0.9:0.2) ) ))
-		k.fCircle(node.p.x, node.p.y, node.size,2)
+		const baseAlpha = node.p.z*(highlighted?1.4:(!overNode?0.9:0.2))
+		k.fill(_.addAlpha(color, baseAlpha * tempAlpha))
+		k.fCircle(node.p.x, node.p.y, node.size, 2)
 
-		if(node.fromRelations[0]) drawRelation(node.fromRelations[0], color, highlighted)
+		if(node.fromRelations[0]) drawRelation(node.fromRelations[0], color, highlighted, tempAlpha)
 	})
 
 
@@ -113,7 +125,69 @@ drawTree = function(){
 }
 
 let pressButtonTemperature = false
-let maxDescendentWeightOriginal = 0
+
+// Recalcular propagação de probabilidade condicional ao longo da árvore (Softmax / Power Temperature)
+recalculateTemperatureWeights = function(val){
+	if(!tree || !tree.nodes || tree.nodes.length === 0) return
+	let newTemp = Math.max(Math.min(Number(val), 1.6), 0)
+	simulatedTemperature = newTemp
+	temperatureActive = true
+
+	const root = tree.nodes[0]
+	root.flow = 1.0
+	const queue = [root]
+
+	// tau varia de ~0.015 a 1.0. Em T=0.0, power é alto (argmax puro: caminho determinístico)
+	const tau = Math.max(newTemp / 1.6, 0.015)
+	const power = 1.0 / tau
+
+	const weightsMap = {}
+	weightsMap[root.id] = root.nDown || 100
+
+	while(queue.length > 0){
+		const parent = queue.shift()
+		const children = parent.to
+		if(!children || children.length === 0) continue
+
+		let totalDown = 0
+		children.forEach(c => { totalDown += (c.nDown || 1) })
+
+		let sumPowered = 0
+		const pows = children.map(c => {
+			const rawProb = (c.nDown || 1) / totalDown
+			const p = Math.pow(rawProb, power)
+			sumPowered += p
+			return p
+		})
+
+		children.forEach((c, idx) => {
+			const prob_T = sumPowered > 0 ? (pows[idx] / sumPowered) : (1 / children.length)
+			c.prob_T = prob_T
+			c.flow = (parent.flow || 1.0) * prob_T
+			const scaledWeight = Math.max(c.flow * (c.nDown || 1) * 5, 0.001)
+			c.descentWeight = scaledWeight
+			weightsMap[c.id] = scaledWeight
+			queue.push(c)
+		})
+	}
+
+	// Notificar a árvore no iframe (Tree Tile) com os novos pesos calculados sem reiniciar o layout
+	if(typeof treeView !== "undefined" && treeView){
+		treeView.sendData({type:"temperature_update", value: weightsMap})
+	}
+
+	// Atualizar DOM se existir
+	const slider = document.getElementById("didactic-temp-slider")
+	const label = document.getElementById("didactic-temp-val")
+	if(slider && Number(slider.value) !== newTemp) slider.value = newTemp
+	if(label) label.textContent = newTemp.toFixed(2)
+}
+
+// Função global para definir a temperatura via painel didático (ou atalho)
+window.setSimulatedTemperature = function(val){
+	recalculateTemperatureWeights(val)
+}
+
 drawTemperatureControl = function(){
 	const x = k.W - 130
 	const y = k.H-30
@@ -122,60 +196,13 @@ drawTemperatureControl = function(){
 	k.stroke("white", 2)
 	k.line(x,y,x+w,y)
 
-
 	if(pressButtonTemperature){
 		k.MOUSE_PRESSED = false
 		const prevSimulatedTemperature = simulatedTemperature
-		simulatedTemperature = 1.6*(k.mX-x)/w
-		simulatedTemperature = Math.max(Math.min(simulatedTemperature, 1.6), 0)
-		if(prevSimulatedTemperature!=simulatedTemperature){
-			//buildTree()
-
-			if(tree.nodes[0].descentWeightOriginal==null){
-				maxDescendentWeightOriginal = 0
-				tree.nodes[0].share = 1
-				tree.nodes.forEach(nd=>{
-					nd.descentWeightOriginal=nd.descentWeight
-					maxDescendentWeightOriginal = Math.max(maxDescendentWeightOriginal, nd.descentWeightOriginal)
-				
-					let nDown = 0
-					nd.to.forEach(son=>{
-						nDown+=son.nDown
-					})
-
-					nd.to.forEach(son=>{
-						son.share = son.nDown/nDown
-					})
-				})
-			}
-
-			let t = (1.6-simulatedTemperature)/1.6
-			//let power = 1 +  5*Math.pow(t, 4)
-			let power = Math.min(1/(1.001-t*0.98),50)
-
-			let maxDescendentWeight = 0
-			tree.nodes.forEach((nd,i)=>{
-
-				// let nDown = 0
-				// nd.to.forEach(son=>{
-				// 	nDown+=son.nDown
-				// })
-
-				// nd.to.forEach(son=>{
-				// 	son.share = son.nDown/nDown
-				// })
-
-				nd.newShare = Math.pow(nd.share, power)
-				console.log(nd.share, power)
-
-
-				nd.descentWeight = nd.descentWeightOriginal*nd.newShare/nd.share
-				//maxDescendentWeight = Math.max(maxDescendentWeight, nd.descentWeight)
-			})
-			let factor = maxDescendentWeightOriginal/maxDescendentWeight
-			tree.nodes.forEach(nd=>nd.descentWeight*=factor)
-
-			//console.log(power, maxDescendentWeightOriginal, maxDescendentWeight)
+		let newTemp = 1.6*(k.mX-x)/w
+		newTemp = Math.max(Math.min(newTemp, 1.6), 0)
+		if(Math.abs(prevSimulatedTemperature - newTemp) > 0.01){
+			recalculateTemperatureWeights(newTemp)
 		}
 	}
 
@@ -207,17 +234,18 @@ triggerStableOverNode = function(withDelay){
 }
 
 
-drawRelation = function(relation, color, highlighted){
-	const p0 = relation.node0.p//e3D.projectCoordinates(relation.node0.object.pca.x, relation.node0.object.pca.y, relation.node0.object.pca.z)
-	const p1 = relation.node1.p//e3D.projectCoordinates(relation.node1.object.pca.x, relation.node1.object.pca.y, relation.node1.object.pca.z)
+drawRelation = function(relation, color, highlighted, tempAlpha=1.0){
+	const p0 = relation.node0.p
+	const p1 = relation.node1.p
 	
 	let onPath = overNode && overNode.id.includes(relation.node1.id)
 	let onComingPath = overNode && relation.node1.id.includes(overNode.id)
 	highlighted = highlighted || onPath || onComingPath
 
-	const alpha = (highlighted?(onPath?1:0.4):(!overNode?0.3:0.03) )*(p0.z + p1.z)
+	const alpha = (highlighted?(onPath?1:0.4):(!overNode?0.3:0.03))*(p0.z + p1.z) * tempAlpha
+	if(alpha < 0.015) return
 	
-	k.stroke(color, alpha+0.1)
+	k.stroke(color, alpha+0.05)
 	k.line(p0.x, p0.y, p1.x, p1.y)
 }
 
@@ -301,8 +329,33 @@ document.clickFunction = function(e){
 		temperatureActive = true
 		return
 	}
+	if(!promptFiles[n]) return
+
+	currentDatasetIndex = n
 	start = promptFiles[n].start
+
+	// Feedback visual imediato no painel didático
+	const badge = document.getElementById("didactic-status-badge")
+	const contextEl = document.getElementById("didactic-context")
+	if(badge){
+		badge.textContent = "A carregar modelo..."
+		badge.style.background = "#f59e0b"
+	}
+	if(contextEl){
+		contextEl.innerHTML = `<i>A processar espaço semântico do prompt: "<b>${start}</b>"...</i>`
+	}
+
+	// Sincronizar dropdown no painel didático
+	const selectEl = document.getElementById("didactic-dataset-select")
+	if(selectEl && Number(selectEl.value) !== n){
+		selectEl.value = n
+	}
+
 	_.loadData(promptFiles[n].file, onLoadData, "json")
+}
+
+window.switchDataset = function(n){
+	document.clickFunction(Number(n))
 }
 
 drawHelp = function(){
@@ -397,7 +450,22 @@ updateDidacticOverlay = function(node){
 	lastDidacticNode = canonicalNode
 
 	if(badge) badge.textContent = "Nó Ativo"
-	if(contextEl) contextEl.innerHTML = `“<b>${canonicalNode.id}</b>”`
+
+	// Apresentação pedagógica com Smart Cut quando no dicionário baseline
+	let displaySentence = canonicalNode.id
+	const isTerminal = !canonicalNode.to || canonicalNode.to.length === 0
+	if(typeof currentDatasetIndex !== "undefined" && currentDatasetIndex === 1 && isTerminal && !/[.!?)]$/.test(displaySentence.trim())){
+		const lastPeriod = displaySentence.lastIndexOf('.')
+		if(lastPeriod !== -1){
+			const completePart = displaySentence.substring(0, lastPeriod + 1)
+			const tailPart = displaySentence.substring(lastPeriod + 1).trim()
+			displaySentence = `${completePart} <span style="opacity: 0.65; font-style: italic;">${tailPart}…</span>`
+		} else {
+			displaySentence = `${displaySentence}…`
+		}
+	}
+
+	if(contextEl) contextEl.innerHTML = `“<b>${displaySentence}</b>”`
 	if(tokenEl) tokenEl.textContent = `"${canonicalNode.name}"`
 
 	// Cálculo da probabilidade condicional

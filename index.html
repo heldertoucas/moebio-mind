@@ -49,108 +49,230 @@
 
         #didactic-panel {
             pointer-events: auto;
-            margin-top: 10px;
-            background: rgba(10, 15, 30, 0.88);
-            backdrop-filter: blur(14px);
-            -webkit-backdrop-filter: blur(14px);
-            border: 1px solid rgba(255, 255, 255, 0.18);
-            border-radius: 12px;
-            padding: 14px 16px;
+            margin-top: 8px;
+            background: rgba(10, 15, 29, 0.82);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            padding: 10px 14px;
             color: #f1f5f9;
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.6);
-            display: none; /* Ativado via JS */
-            line-height: 1.45;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            display: none;
+            width: 300px;
+            box-sizing: border-box;
         }
 
         #didactic-panel.active {
             display: block;
         }
 
-        .didactic-title {
-            font-size: 14px;
-            font-weight: 700;
-            color: #93c5fd;
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
-            margin-bottom: 8px;
+        .didactic-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
+            padding-bottom: 7px;
+            margin-bottom: 2px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .didactic-header-title {
+            font-size: 11px;
+            font-weight: 700;
+            color: #94a3b8;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
         }
 
         .didactic-badge {
-            background: rgba(59, 130, 246, 0.3);
-            color: #bfdbfe;
+            background: rgba(16, 185, 129, 0.2);
+            color: #6ee7b7;
             font-size: 10px;
-            padding: 2px 8px;
-            border-radius: 10px;
-            font-weight: normal;
+            padding: 2px 7px;
+            border-radius: 8px;
+            font-weight: 500;
+            font-family: monospace;
         }
 
-        .metric-row {
+        /* Estrutura Minimalista Unificada de Secções Colapsáveis */
+        .hud-section {
+            border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+        }
+
+        .hud-section:last-child {
+            border-bottom: none;
+        }
+
+        .hud-summary {
             display: flex;
             justify-content: space-between;
-            align-items: baseline;
-            padding: 4px 0;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.07);
-            font-size: 13px;
+            align-items: center;
+            padding: 7px 0;
+            cursor: pointer;
+            user-select: none;
+            outline: none;
+            list-style: none;
         }
-        .metric-label {
-            color: #94a3b8;
+
+        .hud-summary::-webkit-details-marker {
+            display: none;
         }
-        .metric-val {
-            font-family: monospace;
+
+        .hud-title {
+            font-size: 11px;
             font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: #94a3b8;
+            transition: color 0.15s ease;
+        }
+
+        .hud-summary:hover .hud-title {
+            color: #f1f5f9;
+        }
+
+        .hud-arrow {
+            font-size: 11px;
+            color: #64748b;
+            transition: transform 0.2s ease, color 0.2s ease;
+            line-height: 1;
+        }
+
+        .hud-section[open] .hud-arrow {
+            transform: rotate(90deg);
             color: #38bdf8;
         }
 
-        .context-preview {
-            background: rgba(0, 0, 0, 0.4);
-            border-left: 3px solid #3b82f6;
-            padding: 6px 10px;
-            margin: 10px 0 8px 0;
+        .hud-content {
+            padding: 4px 0 9px 0;
             font-size: 12px;
-            border-radius: 0 6px 6px 0;
+            color: #cbd5e1;
+            line-height: 1.5;
+        }
+
+        .hud-text {
+            font-size: 12px;
+            color: #cbd5e1;
+            line-height: 1.5;
             word-break: break-word;
         }
 
-        .didactic-glossary {
-            margin-top: 10px;
-            padding-top: 8px;
-            border-top: 1px solid rgba(255, 255, 255, 0.12);
-            font-size: 11px;
-            line-height: 1.5;
-        }
-        .didactic-glossary summary {
-            cursor: pointer;
-            color: #93c5fd;
-            font-weight: 600;
-            user-select: none;
-            outline: none;
-            padding: 2px 0;
-        }
-        .didactic-glossary summary:hover {
-            color: #bfdbfe;
-        }
-        .glossary-item {
-            margin: 6px 0;
-            padding-left: 6px;
-            border-left: 2px solid rgba(96, 165, 250, 0.4);
-            color: #e2e8f0;
-        }
-        .glossary-item b {
-            color: #38bdf8;
+        .hud-metric-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+            padding: 3px 0;
+            font-size: 12px;
         }
 
-        .pedagogical-tips {
-            margin-top: 8px;
-            padding-top: 8px;
-            border-top: 1px solid rgba(255, 255, 255, 0.1);
-            font-size: 11px;
+        .hud-metric-label {
+            color: #94a3b8;
+        }
+
+        .hud-metric-val {
+            font-family: monospace;
+            font-weight: 600;
+            color: #38bdf8;
+            font-size: 12px;
+        }
+
+        .glossary-entry {
+            margin: 5px 0;
+            font-size: 12px;
             color: #cbd5e1;
         }
-        .pedagogical-tips b {
-            color: #60a5fa;
+
+        .glossary-entry b {
+            color: #38bdf8;
+            font-weight: 600;
+        }
+
+        /* Configuração na Base do HUD */
+        .hud-config-field {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+            margin-bottom: 8px;
+        }
+
+        .hud-config-field:last-child {
+            margin-bottom: 2px;
+        }
+
+        .config-select {
+            background: rgba(30, 41, 59, 0.9);
+            color: #f1f5f9;
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            border-radius: 6px;
+            padding: 5px 8px;
+            font-size: 12px;
+            outline: none;
+            cursor: pointer;
+            width: 100%;
+            transition: all 0.2s ease;
+            box-sizing: border-box;
+        }
+
+        .config-select:focus, .config-select:hover {
+            border-color: #60a5fa;
+            background: rgba(30, 41, 59, 1);
+        }
+
+        .config-select option {
+            background: #0f172a;
+            color: #f1f5f9;
+        }
+
+        .config-slider {
+            -webkit-appearance: none;
+            width: 100%;
+            height: 4px;
+            border-radius: 2px;
+            background: #334155;
+            outline: none;
+            cursor: pointer;
+            margin: 4px 0;
+        }
+
+        .config-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 13px;
+            height: 13px;
+            border-radius: 50%;
+            background: #38bdf8;
+            cursor: pointer;
+            box-shadow: 0 0 6px rgba(56, 189, 248, 0.8);
+            transition: transform 0.1s ease;
+        }
+
+        .config-slider::-webkit-slider-thumb:hover {
+            transform: scale(1.2);
+            background: #60a5fa;
+        }
+
+        .config-actions {
+            display: flex;
+            gap: 5px;
+            margin-top: 3px;
+        }
+
+        .config-action-btn {
+            background: rgba(59, 130, 246, 0.15);
+            border: 1px solid rgba(59, 130, 246, 0.35);
+            color: #bfdbfe;
+            font-size: 10px;
+            padding: 3px 4px;
+            border-radius: 4px;
+            cursor: pointer;
+            flex: 1;
+            text-align: center;
+            transition: all 0.15s ease;
+        }
+
+        .config-action-btn:hover {
+            background: rgba(59, 130, 246, 0.35);
+            color: #ffffff;
         }
     </style>
 </head>
@@ -165,51 +287,109 @@
         </button>
 
         <div id="didactic-panel" class="active">
-            <div class="didactic-title">
-                <span>Leitura do Modelo</span>
+            <div class="didactic-header">
+                <span class="didactic-header-title">Leitura do Modelo</span>
                 <span class="didactic-badge" id="didactic-status-badge">A aguardar seleção</span>
             </div>
 
-            <div class="context-preview" id="didactic-context">
-                Passa o rato sobre uma palavra na árvore ou nó no cubo 3D...
-            </div>
-
-            <div class="metric-row">
-                <span class="metric-label">Token Selecionado:</span>
-                <span class="metric-val" id="didactic-token">—</span>
-            </div>
-            <div class="metric-row">
-                <span class="metric-label">Probabilidade Estimada P:</span>
-                <span class="metric-val" id="didactic-prob">—</span>
-            </div>
-            <div class="metric-row">
-                <span class="metric-label">Espaço Semântico (PCA 3D):</span>
-                <span class="metric-val" id="didactic-coords">—</span>
-            </div>
-
-            <!-- Glossário Pedagógico Direto e Intuitivo (Colapsável) -->
-            <details class="didactic-glossary">
-                <summary>📖 Guia dos Conceitos (clica para abrir/fechar)</summary>
-                <div class="glossary-item">
-                    <b>Token:</b> Palavra ou símbolo que o modelo escolhe neste passo.
-                </div>
-                <div class="glossary-item">
-                    <b>Probabilidade (P):</b> Frequência com que o modelo seleciona este token dado o contexto anterior.
-                </div>
-                <div class="glossary-item">
-                    <b>PCA 3D:</b> Compressão matemática de 1.536 números para 3 eixos (X, Y, Z) para podermos ver o espaço semântico.
-                </div>
-                <div class="glossary-item">
-                    <b>Cubo 3D:</b> Mapa semântico onde ideias parecidas ficam juntas e as linhas mostram o fluxo do raciocínio.
-                </div>
-                <div class="glossary-item">
-                    <b>Temperatura (T):</b> Criatividade do modelo. Baixa (&lt;0.5) repete o óbvio; alta (&gt;1.0) arrisca caminhos diversos.
+            <!-- 1. Frase e Contexto -->
+            <details class="hud-section">
+                <summary class="hud-summary">
+                    <span class="hud-title">Frase e Contexto</span>
+                    <span class="hud-arrow">›</span>
+                </summary>
+                <div class="hud-content">
+                    <div class="hud-text" id="didactic-context">Passa o rato sobre uma palavra na árvore ou nó no cubo 3D...</div>
                 </div>
             </details>
 
-            <div class="pedagogical-tips">
-                💡 <b>Dica pedagógica:</b> Observa como cada escolha de palavra altera a trajetória dentro do cubo.
-            </div>
+            <!-- 2. Métricas do Token -->
+            <details class="hud-section">
+                <summary class="hud-summary">
+                    <span class="hud-title">Métricas do Token</span>
+                    <span class="hud-arrow">›</span>
+                </summary>
+                <div class="hud-content">
+                    <div class="hud-metric-row">
+                        <span class="hud-metric-label">Token Selecionado:</span>
+                        <span class="hud-metric-val" id="didactic-token">—</span>
+                    </div>
+                    <div class="hud-metric-row">
+                        <span class="hud-metric-label">Probabilidade Estimada (P):</span>
+                        <span class="hud-metric-val" id="didactic-prob">—</span>
+                    </div>
+                    <div class="hud-metric-row">
+                        <span class="hud-metric-label">Espaço Semântico (PCA 3D):</span>
+                        <span class="hud-metric-val" id="didactic-coords">—</span>
+                    </div>
+                </div>
+            </details>
+
+            <!-- 3. Guia de Conceitos -->
+            <details class="hud-section">
+                <summary class="hud-summary">
+                    <span class="hud-title">Guia dos Conceitos</span>
+                    <span class="hud-arrow">›</span>
+                </summary>
+                <div class="hud-content">
+                    <div class="glossary-entry"><b>Token:</b> Palavra ou símbolo que o modelo escolhe neste passo.</div>
+                    <div class="glossary-entry"><b>Probabilidade (P):</b> Frequência estimada para a escolha do próximo token.</div>
+                    <div class="glossary-entry"><b>PCA 3D:</b> Compressão matemática de 1.536 números para 3 eixos espaciais.</div>
+                    <div class="glossary-entry"><b>Cubo 3D:</b> Mapa onde palavras com significados afins agrupam-se geometricamente.</div>
+                    <div class="glossary-entry"><b>Temperatura (T):</b> Criatividade ou entropia do modelo (0.0 = certeza, 1.6 = diversidade).</div>
+                </div>
+            </details>
+
+            <!-- 4. Dica Pedagógica -->
+            <details class="hud-section">
+                <summary class="hud-summary">
+                    <span class="hud-title">Dica Pedagógica</span>
+                    <span class="hud-arrow">›</span>
+                </summary>
+                <div class="hud-content">
+                    <div class="hud-text">
+                        Observa como cada escolha de palavra altera a trajetória dentro do cubo e ajusta a probabilidade condicional dos ramos futuros.
+                    </div>
+                </div>
+            </details>
+
+            <!-- 5. Configuração do Modelo (Na Base do HUD) -->
+            <details class="hud-section">
+                <summary class="hud-summary">
+                    <span class="hud-title">Configurações do Modelo</span>
+                    <span class="hud-arrow">›</span>
+                </summary>
+                <div class="hud-content">
+                    <div class="hud-config-field">
+                        <span class="hud-metric-label">Dicionário / Prompt:</span>
+                        <select id="didactic-dataset-select" class="config-select" onchange="window.switchDataset(this.value)">
+                            <option value="0" selected>🇵🇹 Inteligência é... (Frases Completas)</option>
+                            <option value="1">🇵🇹 Inteligência é... (Baseline + Smart Cut)</option>
+                            <option value="9">🇬🇧 Intelligence is... (Inglês original)</option>
+                            <option value="2">🤖 Chatgpt is... (O ChatGPT é)</option>
+                            <option value="3">💡 The best thing about AI is...</option>
+                            <option value="7">📖 Tell me a story: (História)</option>
+                            <option value="6">💭 My dream (O meu sonho)</option>
+                            <option value="4">⏳ When (Quando)</option>
+                            <option value="5">👤 Santiago Ortiz is...</option>
+                            <option value="8">🇫🇷 ERP c'est (Francês)</option>
+                        </select>
+                    </div>
+
+                    <div class="hud-config-field">
+                        <div style="display: flex; justify-content: space-between; align-items: center;">
+                            <span class="hud-metric-label">Temperatura (T):</span>
+                            <span id="didactic-temp-val" class="hud-metric-val">1.60</span>
+                        </div>
+                        <input type="range" id="didactic-temp-slider" class="config-slider" min="0" max="1.6" step="0.05" value="1.6" oninput="window.setSimulatedTemperature(this.value)">
+                        <div class="config-actions">
+                            <button class="config-action-btn" onclick="window.setSimulatedTemperature(0.0)" title="Certeza estrita / determinismo">T = 0.0 (Argmax)</button>
+                            <button class="config-action-btn" onclick="window.setSimulatedTemperature(0.7)" title="Equilíbrio padrão">T = 0.7 (Equilíbrio)</button>
+                            <button class="config-action-btn" onclick="window.setSimulatedTemperature(1.6)" title="Diversidade máxima">T = 1.6 (Máxima)</button>
+                        </div>
+                    </div>
+                </div>
+            </details>
         </div>
     </div>
     <script>CANVAS_CONTAINER="#maindiv"</script>

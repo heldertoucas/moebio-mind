@@ -19,15 +19,16 @@ Ao passar o rato sobre qualquer palavra (um nó na subsequência), o cubo 3D des
 
 
 <fs24><b>Explorar prompts:</b></f>
-· <a href="javascript:document.clickFunction(0)" style="color: #64b5f6; font-weight: bold;">🇵🇹 Inteligência é... (Português)</a>
-· <a href="javascript:document.clickFunction(1)" style="color: white;">O ChatGPT é... (Chatgpt is)</a>
-· <a href="javascript:document.clickFunction(2)" style="color: white;">O melhor da IA é... (Best thing about AI is)</a>
-· <a href="javascript:document.clickFunction(3)" style="color: white;">Quando... (When)</a>
-· <a href="javascript:document.clickFunction(4)" style="color: white;">Santiago Ortiz é... (Santiago Ortiz is)</a> <fs10>(uma auto-projeção reflexiva no multiverso dos dados gerados)</f>
-· <a href="javascript:document.clickFunction(5)" style="color: white;">O meu sonho... (My dream)</a>
-· <a href="javascript:document.clickFunction(6)" style="color: white;">Conta-me uma história... (Tell me a story:)</a>
-· <a href="javascript:document.clickFunction(7)" style="color: white;">(Francês) O ERP é... (ERP c'est)</a>
-· <a href="javascript:document.clickFunction(8)" style="color: white;">A inteligência é... (Intelligence is - EN)</a>
+· <a href="javascript:document.clickFunction(0)" style="color: #64b5f6; font-weight: bold;">🇵🇹 Inteligência é... (Frases Completas)</a> <fs10>(100% frases fechadas com pontuação)</f>
+· <a href="javascript:document.clickFunction(1)" style="color: #81c784;">🇵🇹 Inteligência é... (Baseline + Smart Cut)</a> <fs10>(Baseline recortado no HUD)</f>
+· <a href="javascript:document.clickFunction(2)" style="color: white;">O ChatGPT é... (Chatgpt is)</a>
+· <a href="javascript:document.clickFunction(3)" style="color: white;">O melhor da IA é... (Best thing about AI is)</a>
+· <a href="javascript:document.clickFunction(4)" style="color: white;">Quando... (When)</a>
+· <a href="javascript:document.clickFunction(5)" style="color: white;">Santiago Ortiz é... (Santiago Ortiz is)</a> <fs10>(uma auto-projeção reflexiva no multiverso dos dados gerados)</f>
+· <a href="javascript:document.clickFunction(6)" style="color: white;">O meu sonho... (My dream)</a>
+· <a href="javascript:document.clickFunction(7)" style="color: white;">Conta-me uma história... (Tell me a story:)</a>
+· <a href="javascript:document.clickFunction(8)" style="color: white;">(Francês) O ERP é... (ERP c'est)</a>
+· <a href="javascript:document.clickFunction(9)" style="color: white;">A inteligência é... (Intelligence is - EN)</a>
 
 <fs24><b>Controlo de Temperatura</b></f>
 <a href="javascript:document.clickFunction(100)" style="color: #64b5f6; font-weight: bold;">Clica aqui</a> para ativar a barra de controlo de temperatura no canto inferior esquerdo (0.0 a 1.6). Ao baixar a temperatura (menor entropia), os caminhos menos prováveis desaparecem e a IA torna-se estritamente determinista.

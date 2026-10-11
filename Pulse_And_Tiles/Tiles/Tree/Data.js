@@ -7,6 +7,15 @@ receiveData = function(dataObj){
     case "data":
       setData(dataObj.value)
       break
+    case "temperature_update":
+      if(TREE && TREE.nodes && dataObj.value){
+        TREE.nodes.forEach(nd => {
+          if(dataObj.value[nd.id] != null){
+            nd.descentWeight = dataObj.value[nd.id]
+          }
+        })
+      }
+      break
     case "weights":
       setWeights(dataObj.value)
       break

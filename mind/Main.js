@@ -20,7 +20,11 @@ let runCompletions = false
 const promptFiles = [
 	{
 		start:"Inteligência é ",
-		file:"data/inteligencia_e.json"
+		file:"data/inteligencia_e_completo.json"
+	},
+	{
+		start:"Inteligência é ",
+		file:"data/inteligencia_e_baseline.json"
 	},
 	{
 		start:"Chatgpt is ",//"I had this crazy dream: "//"When "
@@ -115,6 +119,27 @@ onLoadData = function(obj){
 
 	buildTree()
 	calculatePCAs(fastPCA)
+
+	// Re-aplicar a temperatura simulada ativa ao novo conjunto de dados
+	if(typeof recalculateTemperatureWeights === "function"){
+		recalculateTemperatureWeights(typeof simulatedTemperature !== "undefined" ? simulatedTemperature : 1.6)
+	}
+
+	// Se a treeView (iframe da árvore) já existir, re-sincronizar imediatamente com a nova árvore!
+	if(treeView && tree && tree.nodes && tree.nodes.length > 2){
+		treeView.sendData({value:tree, type:"data"})
+	}
+
+	// Notificar o painel didático da conclusão do carregamento do novo modelo
+	const badge = document.getElementById("didactic-status-badge")
+	const contextEl = document.getElementById("didactic-context")
+	if(badge){
+		badge.textContent = `${tree.nodes.length} nós ativos`
+		badge.style.background = "#10b981"
+	}
+	if(contextEl){
+		contextEl.innerHTML = `<b>Modelo Carregado:</b> "${start}" &bull; ${tree.nodes.length} nós no espaço semântico 3D`
+	}
 
 	if(runCompletions){
 		TEXTS_OBJECT.forEach(ob=>textsOnList[ob.text]=true)
