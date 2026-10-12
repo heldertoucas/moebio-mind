@@ -108,9 +108,19 @@ onLoadHelp = function(obj){
 }
 
 cycle=function(){
-	const xSeparation = window.innerWidth - window.innerHeight
-	treeView.setDimensions(xSeparation,0,window.innerWidth-xSeparation,window.innerHeight)
-	k.setDimensions(0,0,xSeparation,window.innerHeight)
+	const totalW = window.innerWidth
+	const totalH = window.innerHeight
+	// Se a janela for widescreen, o cubo 3D pode ocupar até metade da largura (ou o espaço quadrado), mantendo no mínimo 40% para o cubo e 30% para a árvore
+	let cubeW = totalW - totalH
+	if(cubeW < totalW * 0.45){
+		cubeW = Math.round(totalW * 0.45)
+	} else if(cubeW > totalW * 0.65){
+		cubeW = Math.round(totalW * 0.55)
+	}
+	const treeW = totalW - cubeW
+
+	treeView.setDimensions(cubeW, 0, treeW, totalH)
+	k.setDimensions(0, 0, cubeW, totalH)
 	drawTree()
 }
 
