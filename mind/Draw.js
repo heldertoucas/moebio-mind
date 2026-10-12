@@ -431,8 +431,12 @@ updateDidacticOverlay = function(node){
 
 	if(!node){
 		lastDidacticNode = null
-		if(badge) badge.textContent = "A aguardar seleção"
-		if(contextEl) contextEl.textContent = "Passa o rato sobre uma palavra na árvore ou nó no cubo 3D..."
+		if(badge){
+			const count = (tree && tree.nodes) ? tree.nodes.length : 0
+			badge.textContent = count > 0 ? `${count.toLocaleString('pt-PT')} nós prontos` : "Modelo Carregado"
+			badge.style.background = "#10b981"
+		}
+		if(contextEl) contextEl.innerHTML = "<i>Passa o rato sobre uma palavra na árvore ou nó no cubo 3D para inspecionar o modelo...</i>"
 		if(tokenEl) tokenEl.textContent = "—"
 		if(probEl) probEl.textContent = "—"
 		if(coordsEl) coordsEl.textContent = "—"
@@ -449,7 +453,10 @@ updateDidacticOverlay = function(node){
 	if(lastDidacticNode && lastDidacticNode.id === canonicalNode.id) return
 	lastDidacticNode = canonicalNode
 
-	if(badge) badge.textContent = "Nó Ativo"
+	if(badge){
+		badge.textContent = "Nó Selecionado"
+		badge.style.background = "#3b82f6"
+	}
 
 	// Apresentação pedagógica com Smart Cut quando no dicionário baseline
 	let displaySentence = canonicalNode.id

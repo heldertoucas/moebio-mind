@@ -161,6 +161,9 @@ onLoadData = function(obj){
 				treeView.sendData({type:"background_color", value:"black"})
 				treeView.sendData({type:"nodes_color", value:"rgb(10,40,100)"})
 				treeView.sendData({type:"text_color", value:"rgb(255,255,255)"})
+				if(tree && tree.nodes && tree.nodes.length > 2){
+					treeView.sendData({value:tree, type:"data"})
+				}
 
 				treeView.iframe.contentDocument.fonts.add(font)
 				treeView.scope.fontName = fontName
